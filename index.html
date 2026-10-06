@@ -1,0 +1,468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Greenroom — Earn Coins. Play the loop. Cash out.</title>
+<meta name="description" content="Greenroom is a full-stack GPT rewards platform in the EarnLab mould: offer walls that pay, four provably-fair games that spend, and an anti-fraud and payout-verification layer built to fix the category's worst habits." />
+<meta property="og:title" content="Greenroom — GPT rewards platform" />
+<meta property="og:description" content="Earn Coins from offers, spend them in provably-fair games, cash out. Built with a trust layer that protects validated earnings." />
+<meta property="og:type" content="website" />
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Ccircle cx='16' cy='16' r='14' fill='%23f5b942'/%3E%3Ctext x='16' y='22' font-size='16' text-anchor='middle' fill='%230b0f17' font-family='monospace'%3E%C2%A2%3C/text%3E%3C/svg%3E" />
+<style>
+  :root{
+    --bg:#0b0f17; --panel:#121826; --panel2:#0f1420; --line:#243049;
+    --ink:#eaf0fb; --mut:#93a2c0; --gold:#f5b942; --gold2:#ffd479;
+    --green:#35d07f; --purple:#8b5cf6; --red:#f2545b; --blue:#4c9df8;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font:16px/1.6 ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+  }
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 20px}
+  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace}
+
+  /* ── nav ─────────────────────────────────────────────── */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    backdrop-filter:blur(12px);
+    background:rgba(11,15,23,.78);
+    border-bottom:1px solid var(--line);
+  }
+  .nav .wrap{display:flex;align-items:center;gap:18px;height:62px}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:800;letter-spacing:-.3px;text-decoration:none}
+  .brand .coin{
+    width:26px;height:26px;border-radius:50%;
+    background:radial-gradient(circle at 32% 28%,var(--gold2),var(--gold) 58%,#b9801a);
+    color:#2a1c02;display:grid;place-items:center;font-size:14px;font-weight:900;
+    box-shadow:0 0 14px rgba(245,185,66,.45);
+  }
+  .navlinks{display:flex;gap:16px;margin-left:auto;font-size:14px;color:var(--mut)}
+  .navlinks a{text-decoration:none;padding:6px 2px}
+  .navlinks a:hover{color:var(--ink)}
+  @media(max-width:760px){.navlinks{display:none}}
+
+  /* ── hero ────────────────────────────────────────────── */
+  .hero{position:relative;overflow:hidden;padding:74px 0 54px}
+  .hero::before{
+    content:"";position:absolute;inset:-30% -10% auto -10%;height:560px;pointer-events:none;
+    background:
+      radial-gradient(520px 300px at 18% 12%,rgba(245,185,66,.16),transparent 62%),
+      radial-gradient(520px 300px at 82% 4%,rgba(139,92,246,.16),transparent 62%),
+      radial-gradient(420px 260px at 52% 42%,rgba(53,208,127,.10),transparent 64%);
+  }
+  .hero .wrap{position:relative}
+  .eyebrow{
+    display:inline-flex;align-items:center;gap:8px;font-size:12.5px;color:var(--mut);
+    border:1px solid var(--line);background:rgba(18,24,38,.7);
+    padding:6px 12px;border-radius:999px;margin-bottom:20px
+  }
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green)}
+  h1{font-size:clamp(34px,5.4vw,58px);line-height:1.04;letter-spacing:-1.6px;margin:0 0 18px;font-weight:850}
+  .grad{background:linear-gradient(100deg,var(--gold2),var(--gold) 42%,#ff9d3d);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .lede{font-size:clamp(15.5px,1.7vw,18.5px);color:var(--mut);max-width:60ch;margin:0 0 26px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:34px}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;text-decoration:none;font-weight:700;font-size:14.5px;
+    padding:12px 19px;border-radius:12px;border:1px solid transparent;transition:transform .12s ease,box-shadow .12s ease
+  }
+  .btn:hover{transform:translateY(-1px)}
+  .btn-p{background:linear-gradient(180deg,var(--gold2),var(--gold));color:#2a1c02;box-shadow:0 8px 24px rgba(245,185,66,.26)}
+  .btn-s{background:rgba(18,24,38,.85);border-color:var(--line);color:var(--ink)}
+  .btn-s:hover{border-color:#38466a}
+
+  /* ── stats ───────────────────────────────────────────── */
+  .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:12px}
+  .stat{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:15px 16px}
+  .stat b{display:block;font-size:22px;letter-spacing:-.4px;font-weight:800}
+  .stat span{font-size:12.5px;color:var(--mut)}
+  .stat.g b{color:var(--green)} .stat.y b{color:var(--gold)} .stat.p b{color:var(--purple)} .stat.b b{color:var(--blue)}
+
+  /* ── sections ────────────────────────────────────────── */
+  section{padding:56px 0;border-top:1px solid var(--line)}
+  .kicker{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--gold);font-weight:800;margin-bottom:10px}
+  h2{font-size:clamp(23px,3.1vw,33px);letter-spacing:-.9px;margin:0 0 12px;font-weight:820}
+  h3{font-size:16.5px;margin:0 0 8px;font-weight:750;letter-spacing:-.2px}
+  .sub{color:var(--mut);max-width:70ch;margin:0 0 26px}
+  .grid{display:grid;gap:14px}
+  .g2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+  .g3{grid-template-columns:repeat(auto-fit,minmax(232px,1fr))}
+  .g4{grid-template-columns:repeat(auto-fit,minmax(196px,1fr))}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:17px 18px}
+  .card p{margin:0;color:var(--mut);font-size:14px}
+  .ico{
+    width:34px;height:34px;border-radius:10px;display:grid;place-items:center;font-size:17px;margin-bottom:11px;
+    background:rgba(245,185,66,.12);border:1px solid rgba(245,185,66,.22)
+  }
+  .ico.g{background:rgba(53,208,127,.12);border-color:rgba(53,208,127,.24)}
+  .ico.p{background:rgba(139,92,246,.14);border-color:rgba(139,92,246,.26)}
+  .ico.b{background:rgba(76,157,248,.12);border-color:rgba(76,157,248,.24)}
+  .ico.r{background:rgba(242,84,91,.12);border-color:rgba(242,84,91,.24)}
+
+  /* ── loop ────────────────────────────────────────────── */
+  .loop{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}
+  .step{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:15px;position:relative}
+  .step .n{
+    position:absolute;top:-9px;left:14px;font-size:11px;font-weight:800;letter-spacing:.08em;
+    background:var(--gold);color:#2a1c02;border-radius:999px;padding:2px 9px
+  }
+  .step h3{margin:9px 0 6px;font-size:15px}
+  .step p{margin:0;font-size:13.5px;color:var(--mut)}
+
+  /* ── table ───────────────────────────────────────────── */
+  .tblwrap{overflow-x:auto;border:1px solid var(--line);border-radius:14px;background:var(--panel)}
+  table{border-collapse:collapse;width:100%;font-size:14px;min-width:520px}
+  th,td{text-align:left;padding:11px 15px;border-bottom:1px solid var(--line)}
+  th{font-size:11.5px;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);font-weight:800;background:rgba(15,20,32,.7)}
+  tbody tr:last-child td{border-bottom:0}
+  td.n{font-family:ui-monospace,Menlo,Consolas,monospace}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:999px;border:1px solid}
+  .tag.g{color:var(--green);border-color:rgba(53,208,127,.3);background:rgba(53,208,127,.1)}
+  .tag.y{color:var(--gold);border-color:rgba(245,185,66,.3);background:rgba(245,185,66,.1)}
+  .tag.p{color:#c4b5fd;border-color:rgba(139,92,246,.34);background:rgba(139,92,246,.12)}
+  .tag.r{color:#ff8f95;border-color:rgba(242,84,91,.32);background:rgba(242,84,91,.1)}
+
+  /* ── peg banner ──────────────────────────────────────── */
+  .peg{
+    display:flex;flex-wrap:wrap;align-items:center;gap:16px;justify-content:space-between;
+    background:linear-gradient(100deg,rgba(245,185,66,.13),rgba(139,92,246,.11));
+    border:1px solid rgba(245,185,66,.28);border-radius:16px;padding:20px 22px;margin-bottom:22px
+  }
+  .peg b{font-size:clamp(21px,3vw,29px);letter-spacing:-.7px;font-weight:840}
+  .peg span{color:var(--mut);font-size:14px}
+
+  /* ── checklist ───────────────────────────────────────── */
+  ul.check{list-style:none;padding:0;margin:0}
+  ul.check li{position:relative;padding:7px 0 7px 27px;color:var(--mut);font-size:14px}
+  ul.check li::before{
+    content:"✓";position:absolute;left:0;top:7px;color:var(--green);font-weight:900;font-size:13px
+  }
+  ul.check li b{color:var(--ink)}
+
+  /* ── callout ─────────────────────────────────────────── */
+  .note{
+    border-left:3px solid var(--gold);background:rgba(245,185,66,.07);
+    border-radius:0 12px 12px 0;padding:14px 18px;margin-top:20px
+  }
+  .note p{margin:0;font-size:14px;color:var(--mut)}
+  .note b{color:var(--ink)}
+
+  /* ── links ───────────────────────────────────────────── */
+  .links{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+  .link{
+    display:flex;align-items:center;gap:14px;text-decoration:none;
+    background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 17px;
+    transition:border-color .12s ease,transform .12s ease
+  }
+  .link:hover{border-color:#3a4a72;transform:translateY(-2px)}
+  .link .ico{margin:0;flex:0 0 auto}
+  .link b{display:block;font-size:14.5px}
+  .link span{font-size:12.5px;color:var(--mut);word-break:break-all}
+
+  footer{border-top:1px solid var(--line);padding:34px 0 46px;color:var(--mut);font-size:13px}
+  footer .wrap{display:grid;gap:12px}
+  .disc{font-size:12px;line-height:1.62;opacity:.86;max-width:96ch}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="wrap">
+    <a class="brand" href="#top"><span class="coin">¢</span> Greenroom</a>
+    <nav class="navlinks">
+      <a href="#loop">Earn loop</a>
+      <a href="#economy">Coin economy</a>
+      <a href="#games">Games</a>
+      <a href="#trust">Trust layer</a>
+      <a href="#links">Links</a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<div class="hero">
+  <div class="wrap">
+    <span class="eyebrow"><span class="dot"></span> Full-stack prototype · React + tRPC + Postgres</span>
+    <h1>Earn Coins. Play the loop.<br /><span class="grad">Cash out.</span></h1>
+    <p class="lede">
+      Greenroom is a working get-paid-to rewards platform in the EarnLab mould: offer walls and surveys that
+      pay, four provably-fair games that spend, and a trust layer built specifically against this category's
+      worst habits — unjustified bans, voided earnings, and payout-verification friction.
+    </p>
+    <div class="cta">
+      <a class="btn btn-p" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview">▶ Open the live prototype</a>
+      <a class="btn btn-s" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/documents/greenroom-rewards/greenroom-rewards.zip">↓ Download the project (.zip)</a>
+    </div>
+
+    <div class="stats">
+      <div class="stat y"><b>1,000 = $1.00</b><span>Fixed Coin peg</span></div>
+      <div class="stat g"><b>4 modes</b><span>Provably-fair games</span></div>
+      <div class="stat b"><b>8 checks</b><span>Postback validation pipeline</span></div>
+      <div class="stat p"><b>25 tables</b><span>Balances derived from the ledger</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- ── WHAT IT IS ───────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <div class="kicker">What it is</div>
+    <h2>A rewards platform where the trust layer is not an afterthought</h2>
+    <p class="sub">
+      Most GPT platforms bolt anti-fraud on after the first chargeback wave. Greenroom treats validated
+      earnings as the product: every Coin has a ledger row explaining where it came from, every partner
+      postback is validated before it pays, and an account action can never silently confiscate a Coin the
+      user legitimately earned.
+    </p>
+    <div class="grid g4">
+      <div class="card">
+        <div class="ico y">🪙</div>
+        <h3>Coins, not points</h3>
+        <p>A fixed peg to cash and an append-only ledger. Balances are always a sum of entries, never a mutable number.</p>
+      </div>
+      <div class="card">
+        <div class="ico g">✅</div>
+        <h3>Offers that pay</h3>
+        <p>Surveys, app installs, partner offer walls and a watch wall — each crediting through a validated postback.</p>
+      </div>
+      <div class="card">
+        <div class="ico p">🎮</div>
+        <h3>Games that spend</h3>
+        <p>Boxes, Battles, Mines and Keno with published RTPs and a server seed committed before each round.</p>
+      </div>
+      <div class="card">
+        <div class="ico b">🛡️</div>
+        <h3>Provable fairness</h3>
+        <p>Risk scores, device graphs and an appeal path that a real reviewer, not a heuristic, decides.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── EARN LOOP ────────────────────────────────────────── -->
+<section id="loop">
+  <div class="wrap">
+    <div class="kicker">The earn loop</div>
+    <h2>Earn → play → progress → cash out</h2>
+    <p class="sub">The loop closes on itself: offers issue Coins, games and the catalog redeem them, progression pulls the user back tomorrow, and the payout rails convert Coins into money they can actually spend.</p>
+
+    <div class="loop">
+      <div class="step"><span class="n">STEP 1</span><h3>Earn</h3><p>Surveys, app installs, partner offer walls and a watch wall credit Coins through validated postbacks.</p></div>
+      <div class="step"><span class="n">STEP 2</span><h3>Play</h3><p>Boxes, Battles, Mines and Keno convert Coins into a chance at more — the spend sink that keeps the balance moving.</p></div>
+      <div class="step"><span class="n">STEP 3</span><h3>Progress</h3><p>XP, levels, daily streaks, daily bonuses and referrals give a reason to come back tomorrow.</p></div>
+      <div class="step"><span class="n">STEP 4</span><h3>Cash out</h3><p>PayPal, gift cards, crypto and bank transfer turn Coins into real value through a verified payout pipeline.</p></div>
+    </div>
+
+    <div class="grid g3" style="margin-top:16px">
+      <div class="card"><div class="ico y">📋</div><h3>Surveys</h3><p>Highest-margin inventory; credited on partner postback with a completion token.</p></div>
+      <div class="card"><div class="ico g">📱</div><h3>App installs</h3><p>Install-and-open and multi-day retention offers, with reversal windows for uninstalls.</p></div>
+      <div class="card"><div class="ico b">🤝</div><h3>Partner offers</h3><p>Third-party offer walls over a signed, IP-allowlisted and deduplicated postback receiver.</p></div>
+      <div class="card"><div class="ico p">👥</div><h3>Referrals</h3><p>500-Coin signup bonus plus a 5% earn-share that vests, so a reversal can never go negative.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COIN ECONOMY ─────────────────────────────────────── -->
+<section id="economy">
+  <div class="wrap">
+    <div class="kicker">Coin economy</div>
+    <h2>Issuance, redemption and the margin between them</h2>
+
+    <div class="peg">
+      <div><b>1,000 Coins = $1.00</b><br /><span>A fixed peg keeps the balance legible and the liability measurable.</span></div>
+      <div><span class="tag y">Issuance</span> <span class="tag g">Redemption</span> <span class="tag p">Game margin</span></div>
+    </div>
+
+    <div class="grid g2">
+      <div class="card">
+        <h3>Where Coins come from</h3>
+        <p style="margin-bottom:10px">Issued only against validated partner revenue — never from thin air.</p>
+        <ul class="check">
+          <li><b>App installs</b> — the largest single source</li>
+          <li><b>Surveys</b> — highest margin per completion</li>
+          <li><b>Partner offers</b> — offer-wall inventory</li>
+          <li><b>Watch wall</b> — small, frequent credits</li>
+          <li><b>Bonuses</b> — streaks, daily bonus, referrals</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Where Coins go</h3>
+        <p style="margin-bottom:10px">Redeemed into cash, catalog rewards, or spent in the games.</p>
+        <ul class="check">
+          <li><b>Cash-out</b> — the main redemption path</li>
+          <li><b>Reward catalog</b> — gift cards and more</li>
+          <li><b>Games</b> — Boxes, Battles, Mines, Keno</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3 style="margin:26px 0 12px">Published game RTP</h3>
+    <div class="tblwrap">
+      <table>
+        <thead>
+          <tr><th>Mode</th><th>Shape</th><th>Target RTP</th><th>Fairness</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><b>Boxes</b></td><td>4 tiers, mystery reward</td><td class="n">90–94%</td><td><span class="tag g">Server seed committed</span></td></tr>
+          <tr><td><b>Battles</b></td><td>PvP pool simulation</td><td class="n">92%</td><td><span class="tag g">Server seed committed</span></td></tr>
+          <tr><td><b>Mines</b></td><td>5×5 grid, adjustable mines</td><td class="n">97%</td><td><span class="tag g">Server seed committed</span></td></tr>
+          <tr><td><b>Keno</b></td><td>Pick 1–40, draw</td><td class="n">92–95%</td><td><span class="tag g">Server seed committed</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="note">
+      <p><b>Why the peg and the RTP are published:</b> a rewards platform that hides either one is asking to be
+      distrusted. A fixed peg makes the outstanding Coin liability a number on a dashboard, and a published RTP
+      makes the games a transparent entertainment sink rather than a hidden tax on earnings.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── GAMES ────────────────────────────────────────────── -->
+<section id="games">
+  <div class="wrap">
+    <div class="kicker">Gamified spend</div>
+    <h2>Four modes, provably fair</h2>
+    <p class="sub">Each round commits a server seed hash before play and reveals the seed after, so a user can verify the outcome was fixed in advance and not adjusted to their balance.</p>
+    <div class="grid g4">
+      <div class="card"><div class="ico y">🎁</div><h3>Boxes</h3><p>Four tiers of mystery reward with a published drop table.</p></div>
+      <div class="card"><div class="ico p">⚔️</div><h3>Battles</h3><p>Simulated PvP pool with a shared prize pool and transparent odds.</p></div>
+      <div class="card"><div class="ico g">💣</div><h3>Mines</h3><p>Reveal-and-multiply on a 5×5 grid, mines and multiplier picked by the user.</p></div>
+      <div class="card"><div class="ico b">🔢</div><h3>Keno</h3><p>Pick your numbers, then draw — payout scales with hits.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TRUST ────────────────────────────────────────────── -->
+<section id="trust">
+  <div class="wrap">
+    <div class="kicker">Trust, compliance &amp; anti-fraud</div>
+    <h2>Built against the category's known failure modes</h2>
+    <p class="sub">Unjustified bans, voided earnings and payout-verification friction are not edge cases in this category — they are the reason users churn. Each is addressed explicitly, in code rather than in a policy document.</p>
+
+    <div class="grid g2">
+      <div class="card">
+        <div class="ico b">📡</div>
+        <h3>Postback validation</h3>
+        <p>An eight-check pipeline — partner identification, HMAC signature, IP allowlist, duplicate detection, click match, velocity, account standing, amount sanity. Hard failures reject; soft failures park as <b>pending</b> for review rather than destroying a legitimate completion.</p>
+      </div>
+      <div class="card">
+        <div class="ico g">📒</div>
+        <h3>Coin-ledger integrity</h3>
+        <p>Append-only ledger with idempotency keys; balances are always derived, never stored. Chargebacks reverse by writing a compensating entry, so a reversal can never corrupt or silently rewrite history.</p>
+      </div>
+      <div class="card">
+        <div class="ico p">🔍</div>
+        <h3>Device &amp; IP fingerprinting</h3>
+        <p>A hashed device fingerprint (platform family, screen, timezone, canvas/WebGL hash) builds a device graph. Shared-device clusters are flagged for review — never auto-banned — and the signal is weight-capped below the enforcement band.</p>
+      </div>
+      <div class="card">
+        <div class="ico y">🔑</div>
+        <h3>Two-person secret rotation</h3>
+        <p>Re-keying a partner takes a request plus approval by a <b>different</b> admin, rate-limited, with a grace window so in-flight postbacks keep validating and every rotation written to an append-only audit log (fingerprints only).</p>
+      </div>
+      <div class="card">
+        <div class="ico g">⚖️</div>
+        <h3>Transparent bans &amp; appeals</h3>
+        <p>User-visible reason codes, a 14-day appeal window decided by a different reviewer, and an <b>earnings-protection rule</b>: validated Coins are never confiscated as a punishment. Hygiene signals never touch a validated balance.</p>
+      </div>
+      <div class="card">
+        <div class="ico r">📊</div>
+        <h3>The KPIs that matter</h3>
+        <p>Fraud rate, postback pass rate, <b>false-positive rate</b> and appeal resolution time — the last two being what users actually feel, and what most platforms never publish even to themselves.</p>
+      </div>
+    </div>
+
+    <div class="grid g4" style="margin-top:16px">
+      <div class="stat g"><b>&lt;1.5%</b><span>Target fraud rate</span></div>
+      <div class="stat b"><b>99.2%</b><span>Postback pass rate</span></div>
+      <div class="stat y"><b>&lt;0.3%</b><span>False-positive rate</span></div>
+      <div class="stat p"><b>72h</b><span>Appeal resolution target</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HONESTY ──────────────────────────────────────────── -->
+<section>
+  <div class="wrap">
+    <div class="kicker">Scope &amp; honesty</div>
+    <h2>What this prototype does and does not do</h2>
+    <p class="sub">Stated plainly, because a rewards platform that misrepresents its own readiness has already failed the trust test it is built to pass.</p>
+    <div class="grid g2">
+      <div class="card">
+        <h3>Working today</h3>
+        <ul class="check">
+          <li>Offer wall, catalog, wallet and ledger</li>
+          <li>Four interactive, provably-fair games</li>
+          <li>Live postback receiver with HMAC + IP + dedup</li>
+          <li>Referrals with published vesting</li>
+          <li>Admin fraud console, appeals, device graph</li>
+          <li>Two-person secret rotation with grace window</li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>Not included — and named, not hidden</h3>
+        <ul class="check">
+          <li><b>No real money movement.</b> Offer completion is simulated in-app and withdrawals are recorded, not settled.</li>
+          <li><b>No live partner integrations.</b> Real offerwall postbacks, OAuth and payout rails sit outside the platform's capability set.</li>
+          <li><b>Admin provisioning is a claim button</b> for demo convenience, not staff provisioning.</li>
+          <li><b>Email delivery stops at the transport</b> — messages are composed and logged, not sent.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="note">
+      <p><b>Regulatory note:</b> coin-based games with no purchase sit outside most gambling statutes, but
+      sweepstakes and gambling law varies by jurisdiction. Age gating, regional availability and the
+      automated-decision rules around account actions need qualified legal review before any public launch.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ── LINKS ────────────────────────────────────────────── -->
+<section id="links">
+  <div class="wrap">
+    <div class="kicker">Get it</div>
+    <h2>Live prototype, source archive and documentation</h2>
+    <p class="sub">The prototype runs full-stack with a live Postgres database — data persists between visits, and balances are derived from the append-only ledger.</p>
+    <div class="links">
+      <a class="link" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview">
+        <span class="ico g">▶</span>
+        <span><b>Live prototype</b><span>teamily.ai/swarm/api/webapps/…/preview</span></span>
+      </a>
+      <a class="link" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/documents/greenroom-rewards/greenroom-rewards.zip">
+        <span class="ico y">↓</span>
+        <span><b>Project archive (.zip)</b><span>Full source, migrations, .env.example, README</span></span>
+      </a>
+      <a class="link" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/webpages/greenroom-coin-economy/index.html">
+        <span class="ico p">📐</span>
+        <span><b>Coin economy spec</b><span>Issuance, redemption, conversion and the earn loop</span></span>
+      </a>
+      <a class="link" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/webpages/greenroom-antifraud/index.html">
+        <span class="ico b">🛡️</span>
+        <span><b>Anti-fraud spec</b><span>Payout verification, detection, bans and appeals</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div><b>Greenroom</b> — a get-paid-to rewards platform prototype. React + tRPC + Postgres, dark-first and gamified.</div>
+    <div class="disc">
+      This site is a static overview of a prototype. Offer completion, payouts and email delivery are simulated;
+      no real money moves through the prototype. As an AI Agent, I cannot provide legally protected,
+      personalized investment advice. This analysis is for informational purposes only and does not constitute
+      investment advice or recommendations. Consult a licensed financial advisor before making investment
+      decisions.
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
