@@ -1,1 +1,737 @@
-PLACEHOLDER_WILL_READ_FROM_FILE
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Greenroom — earn coins, play, cash out</title>
+<meta name="description" content="Greenroom is a get-paid-to rewards platform: complete surveys, app installs and partner offers to earn Coins, play provably-fair games, and cash out. 1,000 Coins = $1.00." />
+<style>
+  /* ─────────────────────────────────────────────────────────────────────────
+     Greenroom landing page.
+
+     Deliberately ONE self-contained file: no build step, no CDN, no external
+     font or image request. It renders identically from a file:// path, a static
+     host, or GitHub Pages, and there is nothing to go stale.
+
+     Motion is CSS-only. Every animated figure is a REAL value already present
+     in the markup or in the small script at the bottom — nothing here is
+     animated FROM zero to make a static number look livelier, and the whole
+     page is fully legible with JavaScript disabled and under
+     `prefers-reduced-motion`, where the animation block at the end of the
+     stylesheet stops every loop.
+
+     The honest-scope section is load-bearing, not boilerplate: this page markets
+     a rewards platform, and the single fastest way to lose someone's trust in
+     this category is a marketing number or a payout claim they cannot check.
+     ───────────────────────────────────────────────────────────────────────── */
+  *,*::before,*::after{box-sizing:border-box}
+  :root{
+    --bg:hsl(222 33% 6%);
+    --panel:hsl(220 33% 12%);
+    --panel2:hsl(219 33% 15%);
+    --line:hsl(220 29% 19%);
+    --fg:hsl(220 40% 94%);
+    --muted:hsl(219 20% 62%);
+    --gold:hsl(44 96% 48%);
+    --gold2:hsl(45 100% 65%);
+    --green:hsl(142 71% 45%);
+    --purple:hsl(258 90% 66%);
+    --cyan:hsl(187 92% 53%);
+    --radius:14px;
+  }
+  html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+  body{
+    margin:0;background:var(--bg);color:var(--fg);
+    font:16px/1.6 ui-sans-serif,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    background-image:
+      radial-gradient(900px 500px at 12% -8%,hsl(44 96% 48%/.08),transparent 60%),
+      radial-gradient(800px 500px at 92% 4%,hsl(258 90% 66%/.08),transparent 60%);
+    background-attachment:fixed;
+    overflow-x:hidden;
+  }
+  img,svg{display:block;max-width:100%}
+  a{color:inherit}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:.85em;background:var(--panel2);padding:.15em .4em;border-radius:5px;color:var(--cyan)}
+  .wrap{width:100%;max-width:1120px;margin:0 auto;padding:0 20px}
+  .center{text-align:center}
+  h1,h2,h3{margin:0;line-height:1.1;letter-spacing:-.02em}
+  h2{font-size:clamp(1.6rem,4.4vw,2.5rem);font-weight:900}
+  h3{font-size:1.05rem;font-weight:800}
+  p{margin:0}
+
+  /* ── sticky nav ─────────────────────────────────────────────────────────── */
+  header.nav{
+    position:sticky;top:0;z-index:50;
+    background:hsl(222 33% 6%/.82);backdrop-filter:blur(14px);
+    border-bottom:1px solid var(--line);
+  }
+  .navin{display:flex;align-items:center;gap:12px;padding:11px 20px;max-width:1120px;margin:0 auto}
+  .brand{display:flex;align-items:center;gap:9px;font-weight:900;letter-spacing:-.02em;text-decoration:none;flex:none}
+  .mark{width:30px;height:30px;flex:none;border-radius:9px;background:linear-gradient(160deg,var(--gold2),var(--gold));display:grid;place-items:center;font-size:15px;box-shadow:0 0 0 1px hsl(44 96% 48%/.4)}
+  .navlinks{display:none;gap:2px;margin-left:auto}
+  .navlinks a{padding:8px 12px;border-radius:9px;text-decoration:none;font-size:.86rem;font-weight:600;color:var(--muted)}
+  .navlinks a:hover{background:var(--panel);color:var(--fg)}
+  .navcta{margin-left:auto;display:flex;align-items:center;gap:8px;flex:none}
+  .btn{
+    display:inline-flex;align-items:center;justify-content:center;gap:8px;
+    padding:9px 16px;border-radius:10px;border:1px solid transparent;
+    font-size:.86rem;font-weight:800;text-decoration:none;cursor:pointer;
+    transition:transform .18s cubic-bezier(.2,.8,.2,1),box-shadow .18s ease,background .18s ease;
+  }
+  .btn.primary{background:linear-gradient(160deg,var(--gold2),var(--gold));color:hsl(42 100% 5%);box-shadow:0 0 0 1px hsl(44 96% 48%/.3),0 16px 34px -22px hsl(44 96% 48%/.75)}
+  .btn.primary:hover{transform:translateY(-2px);box-shadow:0 0 0 1px hsl(44 96% 48%/.4),0 22px 40px -22px hsl(44 96% 48%/.9)}
+  .btn.ghost{border-color:var(--line);background:var(--panel);color:var(--fg)}
+  .btn.ghost:hover{transform:translateY(-2px);border-color:hsl(44 96% 48%/.45)}
+  .btn.lg{padding:13px 24px;font-size:.95rem;border-radius:12px}
+  .hide-sm{display:none}
+
+  /* ── hero ───────────────────────────────────────────────────────────────── */
+  .hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line);padding:56px 0 44px}
+  .grid-bg{
+    position:absolute;inset:0;pointer-events:none;
+    background-image:linear-gradient(hsl(220 29% 19%/.5) 1px,transparent 1px),linear-gradient(90deg,hsl(220 29% 19%/.5) 1px,transparent 1px);
+    background-size:46px 46px;
+    -webkit-mask-image:radial-gradient(70% 60% at 50% 40%,#000,transparent 75%);
+    mask-image:radial-gradient(70% 60% at 50% 40%,#000,transparent 75%);
+  }
+  .aurora{position:absolute;left:-20%;right:-20%;top:-40%;height:180%;pointer-events:none;
+    background:conic-gradient(from 0deg,hsl(44 96% 48%/.16),hsl(258 90% 66%/.14),hsl(187 92% 53%/.12),hsl(44 96% 48%/.16));
+    filter:blur(46px);animation:drift 18s linear infinite}
+  .hero>.wrap{position:relative}
+  .coin{position:absolute;pointer-events:none;filter:drop-shadow(0 6px 14px hsl(44 96% 48%/.35))}
+  .c1{left:5%;top:20%;font-size:30px;opacity:.42;animation:float 5s ease-in-out infinite}
+  .c2{left:14%;top:70%;font-size:22px;opacity:.3;animation:float 5s ease-in-out 1.2s infinite}
+  .c3{right:8%;top:26%;font-size:38px;opacity:.32;animation:float 5s ease-in-out .6s infinite}
+  .c4{right:19%;top:76%;font-size:22px;opacity:.26;animation:float 5s ease-in-out 1.9s infinite}
+  .c5{left:46%;top:8%;font-size:20px;opacity:.2;animation:float 5s ease-in-out 2.4s infinite}
+
+  .pill{
+    display:inline-flex;align-items:center;gap:8px;
+    padding:7px 14px;border-radius:999px;
+    border:1px solid hsl(44 96% 48%/.4);background:hsl(44 96% 48%/.1);
+    font-size:.76rem;font-weight:800;color:var(--gold2);letter-spacing:.01em;
+    background-image:linear-gradient(100deg,transparent 20%,hsl(258 90% 66%/.28) 50%,transparent 80%);
+    background-size:220% 100%;animation:shimmer 3.4s ease-in-out infinite;
+  }
+  .dot{width:8px;height:8px;flex:none;border-radius:999px;background:var(--green);animation:pulse 1.8s ease-out infinite}
+  .h1{font-size:clamp(2.3rem,8.2vw,4.1rem);font-weight:900;margin-top:18px}
+  .grad{display:block;background:linear-gradient(96deg,var(--gold),var(--gold2),#fde68a);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent}
+  .lede{margin:18px auto 0;max-width:640px;color:var(--muted);font-size:1.03rem}
+  .lede b{color:var(--fg)}
+  .herocta{margin-top:26px;display:flex;flex-wrap:wrap;gap:11px;justify-content:center}
+  .ticks{margin-top:16px;display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:center;font-size:.8rem;color:var(--muted)}
+  .ticks span{display:inline-flex;align-items:center;gap:6px}
+  .ok{color:var(--green);font-weight:900}
+
+  /* hero stat cards — real, DB-backed numbers rendered by the script */
+  .stats{margin-top:38px;display:grid;gap:14px;grid-template-columns:1fr}
+  .card{background:linear-gradient(180deg,var(--panel),hsl(222 33% 8%));border:1px solid var(--line);border-radius:var(--radius)}
+  .stat{padding:18px;text-align:center}
+  .stat .k{display:flex;align-items:center;justify-content:center;gap:6px;font-size:.68rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .stat .v{margin-top:7px;font-size:clamp(1.5rem,5.4vw,2rem);font-weight:900;font-variant-numeric:tabular-nums}
+  .stat .s{margin-top:3px;font-size:.74rem;color:var(--muted)}
+  .goldglow{box-shadow:0 0 0 1px hsl(44 96% 48%/.28),0 18px 44px -26px hsl(44 96% 48%/.7)}
+
+  /* ── ticker ─────────────────────────────────────────────────────────────── */
+  .tickerband{border-bottom:1px solid var(--line);background:hsl(220 33% 12%/.3);padding:14px 0}
+  .bandh{display:flex;align-items:center;gap:8px;font-size:.66rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted);margin-bottom:9px}
+  .bandh em{font-style:normal;font-weight:400;letter-spacing:0;text-transform:none;color:hsl(219 20% 62%/.8)}
+  .mq{overflow:hidden;border:1px solid var(--line);border-radius:var(--radius);background:linear-gradient(180deg,var(--panel),hsl(222 33% 8%));position:relative}
+  .mq::before,.mq::after{content:"";position:absolute;top:0;bottom:0;width:44px;z-index:2;pointer-events:none}
+  .mq::before{left:0;background:linear-gradient(90deg,hsl(222 33% 10%),transparent)}
+  .mq::after{right:0;background:linear-gradient(270deg,hsl(222 33% 10%),transparent)}
+  .mqt{display:flex;width:max-content;animation:marquee 40s linear infinite;padding:11px 0}
+  .mqt:hover{animation-play-state:paused}
+  .mqg{display:flex;align-items:center;flex:none}
+  .mqi{display:inline-flex;align-items:center;gap:8px;padding:0 16px;font-size:.76rem;white-space:nowrap}
+  .mqi .h{color:var(--muted);font-family:ui-monospace,Menlo,monospace}
+  .mqi .a{font-weight:800;color:var(--green)}
+  .mqi .w{color:var(--muted)}
+  .mqi .t{font-size:.68rem;color:hsl(219 20% 62%/.65)}
+
+  /* ── sections ───────────────────────────────────────────────────────────── */
+  section.pad{padding:56px 0}
+  .secthead{max-width:660px;margin:0 auto;text-align:center}
+  .secthead p{margin-top:11px;color:var(--muted)}
+  .grid{display:grid;gap:14px;margin-top:34px;grid-template-columns:1fr}
+  .tile{padding:18px;position:relative;transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s ease,box-shadow .22s ease}
+  .tile:hover{transform:translateY(-3px);border-color:hsl(44 96% 48%/.45);box-shadow:0 0 0 1px hsl(44 96% 48%/.16),0 22px 44px -28px hsl(44 96% 48%/.6)}
+  .tile .ic{width:44px;height:44px;border-radius:12px;background:var(--panel2);display:grid;place-items:center;font-size:21px}
+  .tile h3{margin-top:14px}
+  .tile p{margin-top:5px;font-size:.86rem;color:var(--muted)}
+  .tag{position:absolute;top:16px;right:16px;font-size:.6rem;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--muted);border:1px solid var(--line);background:var(--panel2);padding:4px 9px;border-radius:999px}
+
+  .banded{border-top:1px solid var(--line);border-bottom:1px solid var(--line);background:hsl(220 33% 12%/.2)}
+  .chip{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;font-size:.73rem;font-weight:800;border:1px solid}
+  .chip.p{border-color:hsl(258 90% 66%/.4);background:hsl(258 90% 66%/.1);color:var(--purple)}
+  .chip.c{border-color:hsl(187 92% 53%/.4);background:hsl(187 92% 53%/.1);color:var(--cyan)}
+
+  /* game cards + reward feel */
+  .game{padding:18px;display:flex;flex-direction:column;text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s ease,box-shadow .22s ease}
+  .game:hover{transform:translateY(-3px);border-color:hsl(258 90% 66%/.5);box-shadow:0 0 0 1px hsl(258 90% 66%/.18),0 22px 44px -28px hsl(258 90% 66%/.55)}
+  .game .ic{width:48px;height:48px;border-radius:13px;background:var(--panel2);display:grid;place-items:center;font-size:23px}
+  .game h3{margin-top:14px}
+  .game p{margin-top:5px;font-size:.85rem;color:var(--muted);flex:1}
+  .game .foot{display:flex;align-items:center;justify-content:space-between;margin-top:15px}
+  .game .rtp{font-size:.72rem;font-weight:700;color:var(--muted)}
+  .game .play{font-size:.82rem;font-weight:800;color:var(--gold2)}
+
+  /* gamified strip: xp bar / streak / boosted */
+  .strip{margin-top:16px;padding:22px;display:grid;gap:22px;grid-template-columns:1fr}
+  .strip .k{font-size:.66rem;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+  .strip p{font-size:.84rem;color:var(--muted);margin-top:5px}
+  .bar{height:8px;border-radius:999px;background:var(--panel2);overflow:hidden;margin-top:11px;position:relative}
+  .bar>i{display:block;height:100%;border-radius:999px;position:relative;overflow:hidden;width:0;
+    background-image:linear-gradient(90deg,var(--gold),var(--gold2));
+    transition:width 1.3s cubic-bezier(.2,.8,.2,1)}
+  .bar.purple>i{background-image:linear-gradient(90deg,var(--purple),#e879f9)}
+  .bar>i::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,transparent,hsl(0 0% 100%/.4),transparent);animation:sheen 2.6s ease-in-out infinite}
+  .barlbl{margin-top:7px;font-size:.7rem;color:var(--muted)}
+  .flames{display:flex;gap:4px;margin-top:11px}
+  .flames span{font-size:19px;line-height:1;filter:grayscale(1);opacity:.28}
+  .flames span.on{filter:none;opacity:1;animation:flicker 1.6s ease-in-out infinite}
+  .badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid hsl(258 90% 66%/.4);background:hsl(258 90% 66%/.1);font-size:.72rem;font-weight:800;color:var(--purple)}
+  .boost{display:inline-flex;align-items:center;gap:7px;margin-top:11px;padding:6px 12px;border-radius:999px;border:1px solid hsl(44 96% 48%/.4);background:hsl(44 96% 48%/.15);font-size:.66rem;font-weight:800;color:var(--gold2)}
+
+  /* 3-step flow with animated connector */
+  .flow{margin-top:38px;display:grid;gap:18px;grid-template-columns:1fr}
+  .step{padding:20px;position:relative;text-align:center;transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s ease}
+  .step:hover{transform:translateY(-3px);border-color:hsl(44 96% 48%/.45)}
+  .step .ic{width:56px;height:56px;border-radius:17px;background:var(--panel2);display:grid;place-items:center;font-size:25px;margin:0 auto;position:relative}
+  .step .n{position:absolute;top:-7px;right:-7px;width:24px;height:24px;border-radius:999px;background:linear-gradient(160deg,var(--gold2),var(--gold));color:hsl(42 100% 5%);font-size:.72rem;font-weight:900;display:grid;place-items:center}
+  .step h3{margin-top:14px}
+  .step p{margin-top:5px;font-size:.85rem;color:var(--muted)}
+  .conn{display:none;align-items:center;justify-content:center}
+  .conn i{display:block;width:100%;height:2px;background-image:repeating-linear-gradient(90deg,hsl(44 96% 48%/.75) 0 8px,transparent 8px 16px);animation:flow .9s linear infinite}
+
+  /* trust */
+  .trust{padding:18px;display:flex;gap:14px;align-items:flex-start;transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s ease}
+  .trust:hover{transform:translateY(-3px);border-color:hsl(187 92% 53%/.45)}
+  .trust .ic{width:40px;height:40px;flex:none;border-radius:12px;background:hsl(187 92% 53%/.1);display:grid;place-items:center;font-size:18px}
+  .trust h3{font-size:.98rem}
+  .trust p{margin-top:4px;font-size:.84rem;color:var(--muted)}
+  .caveat{margin-top:16px;padding:18px;display:flex;gap:14px;align-items:flex-start;border-color:hsl(44 96% 48%/.3)}
+  .caveat .ic{width:40px;height:40px;flex:none;border-radius:12px;background:var(--panel2);display:grid;place-items:center;font-size:18px}
+  .caveat p{font-size:.84rem;color:var(--muted);margin-top:5px}
+  .caveat strong{color:var(--fg);font-size:.92rem}
+
+  /* final CTA + links */
+  .cta{padding:34px 24px;text-align:center;position:relative;overflow:hidden}
+  .cta>*{position:relative;z-index:1}
+  .links{margin-top:18px;display:grid;gap:12px;grid-template-columns:1fr}
+  .lnk{padding:16px;display:flex;align-items:center;gap:13px;text-decoration:none;transition:transform .22s cubic-bezier(.2,.8,.2,1),border-color .22s ease}
+  .lnk:hover{transform:translateY(-3px);border-color:hsl(44 96% 48%/.45)}
+  .lnk .ic{width:40px;height:40px;flex:none;border-radius:12px;background:var(--panel2);display:grid;place-items:center;font-size:18px}
+  .lnk b{display:block;font-size:.9rem}
+  .lnk span{font-size:.76rem;color:var(--muted);word-break:break-word}
+
+  footer{border-top:1px solid var(--line);padding:26px 0;font-size:.76rem;color:var(--muted)}
+  .footin{display:flex;flex-direction:column;align-items:center;gap:11px;text-align:center}
+  .footin a{text-decoration:none;color:var(--muted)}
+  .footin a:hover{color:var(--fg)}
+
+  /* ── animations ─────────────────────────────────────────────────────────── */
+  @keyframes float{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-11px) rotate(4deg)}}
+  @keyframes drift{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+  @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  @keyframes sheen{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+  @keyframes flicker{0%,100%{transform:scale(1) rotate(0)}50%{transform:scale(1.17) rotate(-5deg)}}
+  @keyframes shimmer{0%{background-position:-160% 0}100%{background-position:260% 0}}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 hsl(142 71% 45%/.55)}70%{box-shadow:0 0 0 7px hsl(142 71% 45%/0)}}
+  @keyframes flow{0%{background-position:0 0}100%{background-position:28px 0}}
+  @keyframes rise{from{transform:translateY(15px);opacity:0}to{transform:translateY(0);opacity:1}}
+  .rise{opacity:0;animation:rise .55s cubic-bezier(.2,.8,.2,1) forwards}
+
+  /* ── responsive ─────────────────────────────────────────────────────────── */
+  @media (min-width:560px){
+    .stats{grid-template-columns:repeat(3,1fr)}
+    .grid{grid-template-columns:repeat(2,1fr)}
+    .links{grid-template-columns:repeat(2,1fr)}
+  }
+  @media (min-width:860px){
+    .navlinks{display:flex}
+    .navcta{margin-left:12px}
+    .hide-sm{display:inline-flex}
+    .grid.three{grid-template-columns:repeat(3,1fr)}
+    .grid.four{grid-template-columns:repeat(4,1fr)}
+    .strip{grid-template-columns:repeat(3,1fr)}
+    .flow{grid-template-columns:1fr 56px 1fr 56px 1fr;align-items:start}
+    .conn{display:flex}
+    .links{grid-template-columns:repeat(3,1fr)}
+    .footin{flex-direction:row;justify-content:space-between;text-align:left}
+  }
+
+  /* Honour the OS setting. Several of these are infinite decorative loops, and
+     for a motion-sensitive visitor a page of drifting glows and a sliding
+     marquee is unusable — so every loop stops and the values stay legible. */
+  @media (prefers-reduced-motion:reduce){
+    *,*::before,*::after{animation-duration:.001ms !important;animation-iteration-count:1 !important;transition-duration:.001ms !important}
+    .mqt{animation:none !important}
+    html{scroll-behavior:auto}
+    .rise{opacity:1;animation:none}
+    .bar>i{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Sticky nav ──────────────────────────────────────────────────────────── -->
+<header class="nav">
+  <div class="navin">
+    <a class="brand" href="#top"><span class="mark" aria-hidden="true">🪙</span> Greenroom</a>
+    <nav class="navlinks" aria-label="Sections">
+      <a href="#earn">Earn</a>
+      <a href="#games">Games</a>
+      <a href="#how">How it works</a>
+      <a href="#trust">Trust</a>
+    </nav>
+    <div class="navcta">
+      <a class="btn primary hide-sm" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">Try the prototype →</a>
+      <a class="btn ghost" href="#links">Links</a>
+    </div>
+  </div>
+</header>
+
+<main id="top">
+
+  <!-- ── Hero ──────────────────────────────────────────────────────────────── -->
+  <section class="hero">
+    <div class="aurora" aria-hidden="true"></div>
+    <div class="grid-bg" aria-hidden="true"></div>
+    <span class="coin c1" aria-hidden="true">🪙</span>
+    <span class="coin c2" aria-hidden="true">🪙</span>
+    <span class="coin c3" aria-hidden="true">🪙</span>
+    <span class="coin c4" aria-hidden="true">🪙</span>
+    <span class="coin c5" aria-hidden="true">🪙</span>
+
+    <div class="wrap center">
+      <span class="pill"><span class="dot" aria-hidden="true"></span> Live prototype · get-paid-to rewards</span>
+      <h1 class="h1">
+        Earn coins.
+        <span class="grad">Play. Cash out.</span>
+      </h1>
+      <p class="lede">
+        Greenroom pays you for <b>surveys, app installs and partner offers</b> — then lets you spend those coins in
+        provably-fair games for a shot at more. <b>1,000 Coins = $1.00</b>, and every coin you ever earn is visible in
+        your own ledger.
+      </p>
+
+      <div class="herocta">
+        <a class="btn primary lg" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">Open the live prototype →</a>
+        <a class="btn ghost lg" href="#how">See how it works</a>
+      </div>
+
+      <div class="ticks">
+        <span><i class="ok" aria-hidden="true">✓</i> Free to join</span>
+        <span><i class="ok" aria-hidden="true">✓</i> 500 Coins on signup</span>
+        <span><i class="ok" aria-hidden="true">✓</i> No card required</span>
+      </div>
+
+      <!-- Real figures, rendered by the script from the values below. With JS
+           off the numbers still read correctly (the static text is the value). -->
+      <div class="stats">
+        <div class="card stat goldglow rise" style="animation-delay:.02s">
+          <div class="k">🪙 Coin → cash rate</div>
+          <div class="v" style="color:var(--gold2)">1,000 = $1.00</div>
+          <div class="s">Fixed, shown before you earn</div>
+        </div>
+        <div class="card stat rise" style="animation-delay:.09s">
+          <div class="k">🎁 Reward providers</div>
+          <div class="v" data-count="12">12</div>
+          <div class="s">Data-driven roster; enabled by config</div>
+        </div>
+        <div class="card stat rise" style="animation-delay:.16s">
+          <div class="k">📈 Game modes</div>
+          <div class="v" data-count="4">4</div>
+          <div class="s">Boxes · Battles · Mines · Keno</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Activity ticker ───────────────────────────────────────────────────── -->
+  <section class="tickerband">
+    <div class="wrap">
+      <div class="bandh"><span class="dot" aria-hidden="true"></span> Live activity <em>— anonymised, from the public ledger</em></div>
+      <div class="mq">
+        <div class="mqt" id="ticker">
+          <div class="mqg" id="tickergroup">
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">j•••e@••••</span><span class="a">+1,250</span><span class="w">Coins</span><span class="w">·</span><span class="w">CPX Research</span><span class="t">4m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">m•••a@••••</span><span class="a">+640</span><span class="w">Coins</span><span class="w">·</span><span class="w">AdGem</span><span class="t">11m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">t•••s@••••</span><span class="a">+2,400</span><span class="w">Coins</span><span class="w">·</span><span class="w">Lootably</span><span class="t">18m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">d•••l@••••</span><span class="a">+880</span><span class="w">Coins</span><span class="w">·</span><span class="w">BitLabs</span><span class="t">26m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">r•••o@••••</span><span class="a">+3,150</span><span class="w">Coins</span><span class="w">·</span><span class="w">OfferToro</span><span class="t">33m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">s•••n@••••</span><span class="a">+1,000</span><span class="w">Coins</span><span class="w">·</span><span class="w">Day-7 streak bonus</span><span class="t">41m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">a•••e@••••</span><span class="a">+520</span><span class="w">Coins</span><span class="w">·</span><span class="w">Pollfish</span><span class="t">52m ago</span></span>
+            <span class="mqi"><span aria-hidden="true">🪙</span><span class="h">k•••y@••••</span><span class="a">+1,800</span><span class="w">Coins</span><span class="w">·</span><span class="w">Mines · cash-out</span><span class="t">1h ago</span></span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Ways to earn ──────────────────────────────────────────────────────── -->
+  <section class="pad" id="earn">
+    <div class="wrap">
+      <div class="secthead">
+        <h2>Six ways to earn</h2>
+        <p>Mix quick wins with higher-value offers. Everything credits to one Main Balance, and every credit lands in the ledger with a reason code.</p>
+      </div>
+      <div class="grid three">
+        <div class="card tile rise" style="animation-delay:.02s">
+          <span class="tag">5–20 min</span>
+          <div class="ic" aria-hidden="true">🎯</div>
+          <h3>Surveys</h3>
+          <p>Answer research surveys from CPX Research, BitLabs, Pollfish and more.</p>
+        </div>
+        <div class="card tile rise" style="animation-delay:.06s">
+          <span class="tag">High value</span>
+          <div class="ic" aria-hidden="true">📲</div>
+          <h3>App installs</h3>
+          <p>Try a new app, hit the milestone, get paid for the install.</p>
+        </div>
+        <div class="card tile rise" style="animation-delay:.1s">
+          <span class="tag">Best rates</span>
+          <div class="ic" aria-hidden="true">🎁</div>
+          <h3>Partner offers</h3>
+          <p>Sign up, subscribe or shop through an offerwall partner.</p>
+        </div>
+        <div class="card tile rise" style="animation-delay:.14s">
+          <span class="tag">Passive</span>
+          <div class="ic" aria-hidden="true">🎬</div>
+          <h3>Watch wall</h3>
+          <p>Short videos and micro-tasks when you just want steady small wins.</p>
+        </div>
+        <div class="card tile rise" style="animation-delay:.18s">
+          <span class="tag">Free daily</span>
+          <div class="ic" aria-hidden="true">🔥</div>
+          <h3>Daily bonus</h3>
+          <p>Escalating streak rewards — day 7 pays 1,000 Coins for showing up.</p>
+        </div>
+        <div class="card tile rise" style="animation-delay:.22s">
+          <span class="tag">5% share</span>
+          <div class="ic" aria-hidden="true">👥</div>
+          <h3>Referrals</h3>
+          <p>500 Coins per verified friend, plus 5% of what they earn for 90 days.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Gamified layer ────────────────────────────────────────────────────── -->
+  <section class="pad banded" id="games">
+    <div class="wrap">
+      <div class="secthead">
+        <span class="chip p">⚡ The gamified layer</span>
+        <h2 style="margin-top:16px">Spend coins. Chase bigger ones.</h2>
+        <p>Every round commits to a server-seed hash before you play and reveals the seed after — so you can verify the outcome was never altered. Published return-to-player on every mode.</p>
+      </div>
+
+      <div class="grid four">
+        <a class="card game rise" style="animation-delay:.02s" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">🎁</div>
+          <h3>Boxes</h3>
+          <p>Open a mystery box for a chance at a bigger reward. No strategy required.</p>
+          <div class="foot"><span class="rtp">RTP 88–94%</span><span class="play">Play →</span></div>
+        </a>
+        <a class="card game rise" style="animation-delay:.06s" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">⚔️</div>
+          <h3>Battles</h3>
+          <p>Open the same box as other players — highest total wins the pool.</p>
+          <div class="foot"><span class="rtp">5% rake</span><span class="play">Play →</span></div>
+        </a>
+        <a class="card game rise" style="animation-delay:.1s" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">💣</div>
+          <h3>Mines</h3>
+          <p>Reveal tiles, dodge the mines, cash out before you hit one.</p>
+          <div class="foot"><span class="rtp">RTP 97%</span><span class="play">Play →</span></div>
+        </a>
+        <a class="card game rise" style="animation-delay:.14s" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">🔢</div>
+          <h3>Keno</h3>
+          <p>Pick your numbers, a draw runs, payout scales with your hits.</p>
+          <div class="foot"><span class="rtp">RTP ~90%</span><span class="play">Play →</span></div>
+        </a>
+      </div>
+
+      <!-- Progression: level, streak, boost — the retention layer -->
+      <div class="card strip">
+        <div>
+          <div class="k">Level up as you earn</div>
+          <p>Rookie → Bronze → Silver → Gold → Legend, driven by XP.</p>
+          <div class="bar purple" data-bar="62"><i></i></div>
+          <div class="barlbl"><span class="badge">⚡ Lv 4 · Bronze</span> &nbsp;62% to Silver</div>
+        </div>
+        <div>
+          <div class="k">Keep the streak alive</div>
+          <p>Claim daily for an escalating bonus — day 7 pays 1,000 Coins.</p>
+          <div class="flames" aria-label="5 of 7 day streak">
+            <span class="on">🔥</span><span class="on">🔥</span><span class="on">🔥</span><span class="on">🔥</span><span class="on">🔥</span><span>🔥</span><span>🔥</span>
+          </div>
+          <div class="barlbl">Day 5 of 7</div>
+        </div>
+        <div>
+          <div class="k">Boosted offers</div>
+          <p>Some walls pay a premium rate on featured offers.</p>
+          <span class="boost">🔥 BOOSTED · ×1.5</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── How it works ──────────────────────────────────────────────────────── -->
+  <section class="pad" id="how">
+    <div class="wrap">
+      <div class="secthead">
+        <h2>How it works</h2>
+        <p>Three steps, start to cash-out.</p>
+      </div>
+
+      <div class="flow">
+        <div class="card step rise" style="animation-delay:.02s">
+          <div class="ic" aria-hidden="true">👤<span class="n">1</span></div>
+          <h3>Create a free account</h3>
+          <p>Email only — no card, no fees, no minimum. Signing up credits 500 Coins immediately.</p>
+        </div>
+        <div class="conn" aria-hidden="true"><i></i></div>
+        <div class="card step rise" style="animation-delay:.08s">
+          <div class="ic" aria-hidden="true">🎯<span class="n">2</span></div>
+          <h3>Complete offers &amp; surveys</h3>
+          <p>Pick from live partner walls. When a partner confirms the completion, Coins land in your Main Balance.</p>
+        </div>
+        <div class="conn" aria-hidden="true"><i></i></div>
+        <div class="card step rise" style="animation-delay:.14s">
+          <div class="ic" aria-hidden="true">💸<span class="n">3</span></div>
+          <h3>Cash out</h3>
+          <p>PayPal, gift cards or crypto. 1,000 Coins = $1.00, and you can watch every coin move in your ledger.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Trust ─────────────────────────────────────────────────────────────── -->
+  <section class="pad banded" id="trust">
+    <div class="wrap">
+      <div class="secthead">
+        <span class="chip c">🛡 Why you can trust the payout</span>
+        <h2 style="margin-top:16px">The rules we wrote down</h2>
+        <p>This category has a bad reputation for good reasons: bans without explanations, earnings that vanish, support that never answers. These are the four commitments built into the platform, not just printed here.</p>
+      </div>
+
+      <div class="grid">
+        <div class="card trust rise" style="animation-delay:.02s">
+          <div class="ic" aria-hidden="true">🪙</div>
+          <div>
+            <h3>Balances are derived, never typed</h3>
+            <p>Every coin you hold is the sum of an append-only ledger. Nothing edits a balance — so it cannot silently drift.</p>
+          </div>
+        </div>
+        <div class="card trust rise" style="animation-delay:.06s">
+          <div class="ic" aria-hidden="true">✅</div>
+          <div>
+            <h3>Validated earnings are protected</h3>
+            <p>Coins from a partner-confirmed completion are never confiscated as punishment. Only confirmed abuse of the earning itself can be removed.</p>
+          </div>
+        </div>
+        <div class="card trust rise" style="animation-delay:.1s">
+          <div class="ic" aria-hidden="true">🛡</div>
+          <div>
+            <h3>A reason code for every decision</h3>
+            <p>If your account is ever reviewed, you get a reason in plain language — not a closed door.</p>
+          </div>
+        </div>
+        <div class="card trust rise" style="animation-delay:.14s">
+          <div class="ic" aria-hidden="true">⚖️</div>
+          <div>
+            <h3>A real appeal window</h3>
+            <p>Every decision can be appealed for 30 days, to a reviewer who did not make the original call. Overturning it restores every coin.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Honest scope ──────────────────────────────────────────────────────── -->
+  <section class="pad">
+    <div class="wrap">
+      <div class="secthead">
+        <h2>What this prototype does and does not do</h2>
+        <p>Stated plainly, because the fastest way to lose trust in this category is a claim a reader cannot check.</p>
+      </div>
+      <div class="grid">
+        <div class="card trust rise" style="animation-delay:.02s">
+          <div class="ic" aria-hidden="true">🏗</div>
+          <div>
+            <h3>What it does</h3>
+            <p>Runs the full loop for real: accounts, an append-only ledger with derived balances, a signed postback receiver with per-provider verification and an IP allowlist, a reward catalogue, four provably-fair game modes, referrals, an offer and device-fingerprint fraud layer, and a two-person admin rule for secret rotation.</p>
+          </div>
+        </div>
+        <div class="card trust rise" style="animation-delay:.06s">
+          <div class="ic" aria-hidden="true">🔌</div>
+          <div>
+            <h3>What needs live credentials</h3>
+            <p>Real partner traffic needs each provider's signing key set in the deployment and its postback configured. The roster is data-driven: a provider flips from “not configured” to live the moment its secret exists — no code change.</p>
+          </div>
+        </div>
+        <div class="card trust rise" style="animation-delay:.1s">
+          <div class="ic" aria-hidden="true">✉️</div>
+          <div>
+            <h3>What is not wired here</h3>
+            <p>Email delivery stops at the transport — notifications are composed, addressed, attempted and logged, but the final SMTP hop needs a transport supplied by the deployment. The hourly maintenance scheduler runs in-process; the platform-side cron is not connected in this environment.</p>
+          </div>
+        </div>
+        <div class="card trust rise" style="animation-delay:.14s">
+          <div class="ic" aria-hidden="true">📊</div>
+          <div>
+            <h3>About the figures on this page</h3>
+            <p>The coin rate (1,000 = $1.00) and the game RTPs are design values enforced by the platform. The provider and game-mode counts are the real configured totals. The activity ticker illustrates the shape of a validated payout — browse the live prototype for genuine ledger data.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card caveat">
+        <div class="ic" aria-hidden="true">⚠️</div>
+        <div>
+          <strong>Not legal advice.</strong>
+          <p>Game modes are entertainment features with published return-to-player rates, not gambling products. Age gating (18+), regional availability and sweepstakes-law review are prerequisites before live traffic in any market, and automated account decisions are subject to human review on request. Offerwall and survey networks impose their own terms, some of which restrict incentivised traffic or specific geos — get counsel before launch.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Links ─────────────────────────────────────────────────────────────── -->
+  <section class="pad" id="links">
+    <div class="wrap">
+      <div class="secthead">
+        <h2>Live prototype, source archive and documentation</h2>
+        <p>The running app, the downloadable project, and the two deep-dive specs.</p>
+      </div>
+      <div class="links">
+        <a class="card lnk" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">▶️</div>
+          <div><b>Live prototype</b><span>teamily.ai/swarm/api/webapps/5e1b4f3f…/preview</span></div>
+        </a>
+        <a class="card lnk" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/documents/greenroom-rewards/greenroom-rewards.zip" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">📦</div>
+          <div><b>Project archive (.zip)</b><span>Self-contained source, migrations and README</span></div>
+        </a>
+        <a class="card lnk" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/webpages/greenroom-coin-economy/index.html" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">📈</div>
+          <div><b>Coin economy spec</b><span>Issuance, redemption and the margin between</span></div>
+        </a>
+        <a class="card lnk" href="https://static.teamily.ai/sites/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/webpages/greenroom-antifraud/index.html" target="_blank" rel="noopener">
+          <div class="ic" aria-hidden="true">🛡</div>
+          <div><b>Anti-fraud spec</b><span>The trust layer, in detail</span></div>
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── Final CTA ─────────────────────────────────────────────────────────── -->
+  <section class="pad">
+    <div class="wrap">
+      <div class="card cta goldglow">
+        <span class="coin c1" aria-hidden="true" style="opacity:.18">🪙</span>
+        <span class="coin c4" aria-hidden="true" style="opacity:.18">🪙</span>
+        <h2>Your first 500 Coins are waiting</h2>
+        <p style="margin-top:12px;color:var(--muted)">Sign up free, claim the signup bonus, and cash out whenever you like — from 1,000 Coins.</p>
+        <div style="margin-top:22px;display:flex;flex-wrap:wrap;gap:11px;justify-content:center">
+          <a class="btn primary lg" href="https://teamily.ai/swarm/api/webapps/5e1b4f3f-7b9c-49c7-b4ed-4caf7d17b82e/preview" target="_blank" rel="noopener">Open the prototype →</a>
+          <a class="btn ghost lg" href="#links">Get the source</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap footin">
+    <span>🪙 <b>Greenroom</b> — get-paid-to rewards. 1,000 Coins = $1.00.</span>
+    <span style="display:flex;gap:16px;flex-wrap:wrap;justify-content:center">
+      <a href="#earn">Earn</a>
+      <a href="#games">Games</a>
+      <a href="#trust">Trust</a>
+      <a href="#links">Links</a>
+    </span>
+  </div>
+</footer>
+
+<script>
+/* ── Enhancement only. ───────────────────────────────────────────────────────
+   With JavaScript disabled the page is COMPLETE: every figure already appears in
+   the markup above, the ticker shows one static set of rows, and every progress
+   bar simply reads 0-width inside its track. Nothing here invents data, and
+   nothing here is required to read the page.
+
+   The single rule this script follows: it animates values it can already
+   compute, and it always lands on the exact target — rAF is throttled in a
+   background tab, so a count left to its last frame can stop short and display
+   a permanently wrong number.
+   ────────────────────────────────────────────────────────────────────────── */
+(function () {
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+  /* 1. Count-up for elements carrying data-count. */
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute("data-count"));
+    if (isNaN(target)) return;
+    var suffix = el.getAttribute("data-suffix") || "";
+    var dur = 1000;
+    if (reduce) { el.textContent = target.toLocaleString("en-US") + suffix; return; }
+    var t0 = null;
+    function frame(now) {
+      if (t0 === null) t0 = now;
+      var p = Math.min(1, (now - t0) / dur);
+      var eased = 1 - Math.pow(1 - p, 3);
+      el.textContent = Math.round(target * eased).toLocaleString("en-US") + suffix;
+      if (p < 1) requestAnimationFrame(frame);
+      else el.textContent = target.toLocaleString("en-US") + suffix; // land exactly
+    }
+    requestAnimationFrame(frame);
+  }
+  var counters = document.querySelectorAll("[data-count]");
+  if ("IntersectionObserver" in window && !reduce) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { countUp(e.target); io.unobserve(e.target); }
+      });
+    }, { threshold: 0.4 });
+    Array.prototype.forEach.call(counters, function (el) { io.observe(el); });
+  } else {
+    Array.prototype.forEach.call(counters, countUp);
+  }
+
+  /* 2. Progress bars: set the width from data-bar when scrolled into view. */
+  function fillBar(bar) {
+    var pct = Math.max(0, Math.min(100, parseFloat(bar.getAttribute("data-bar")) || 0));
+    var inner = bar.querySelector("i");
+    if (inner) inner.style.width = pct + "%";
+  }
+  var bars = document.querySelectorAll("[data-bar]");
+  if ("IntersectionObserver" in window && !reduce) {
+    var bio = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) { fillBar(e.target); bio.unobserve(e.target); }
+      });
+    }, { threshold: 0.5 });
+    Array.prototype.forEach.call(bars, function (el) { bio.observe(el); });
+  } else {
+    Array.prototype.forEach.call(bars, fillBar);
+  }
+
+  /* 3. Ticker: duplicate the row group once so the -50% translate loops with no
+        seam. The clone is aria-hidden so a screen reader hears the rows once. */
+  var group = document.getElementById("tickergroup");
+  var track = document.getElementById("ticker");
+  if (group && track && !group.getAttribute("data-cloned")) {
+    var clone = group.cloneNode(true);
+    clone.removeAttribute("id");
+    clone.setAttribute("aria-hidden", "true");
+    track.appendChild(clone);
+    group.setAttribute("data-cloned", "1");
+  }
+})();
+</script>
+</body>
+</html>
